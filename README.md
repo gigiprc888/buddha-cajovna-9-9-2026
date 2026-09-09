@@ -30,3 +30,9 @@ Preview: `0.0.0.0:8080`
 | `src/lib/copy.ts` | CS / EN copy |
 
 Staff desk: `/smena`
+
+## GitHub export (2026-09-09)
+
+Full Phase 1 source for review and Railway. Binary media under `public/place` and `public/banners` is hosted with the live app (size). `npm install && npm run dev` boots the app.
+
+Staff PINs are environment variables, not in git: `SHIFT_PIN_OWNER` · `SHIFT_PIN_STAFF`
