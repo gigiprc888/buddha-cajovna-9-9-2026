@@ -5,6 +5,7 @@ export type SiteFlags = {
 };
 
 const DEFAULTS: SiteFlags = { shopLive: false };
+
 const listeners = new Set<() => void>();
 
 function read(): SiteFlags {

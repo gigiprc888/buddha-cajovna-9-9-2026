@@ -6,5 +6,53 @@
     <description>Čaj, akce a provozní lístky z nástěnky čajovny Buddha. Myslíkova 174/23, Praha 1.</description>
     <language>cs</language>
     <atom:link href="https://www.buddhacajovna.cz/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Happy Hours 1+1 dýmka</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n0</guid>
+      <pubDate>Tue, 01 Sep 2026 11:00:00 GMT</pubDate>
+      <category>akce</category>
+      <description>Pondělí–čtvrtek 13:00–15:00. Dvě dýmky za cenu jedné, ve dvou a víc. Platí se ta dražší. Nekombinuje se s 10. dýmkou zdarma.</description>
+    </item>
+    <item>
+      <title>Po Karlově mostě k nám</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n0b</guid>
+      <pubDate>Tue, 08 Sep 2026 08:00:00 GMT</pubDate>
+      <category>praha</category>
+      <description>Praha znovu žije tajemstvím — most, nábřeží, zabočit na Myslíkovu. Suterén, kde se po městě symbolů zastaví čas. Čaj, dýmka, ticho.</description>
+    </item>
+    <item>
+      <title>Vchod znají ti, kdo vědí</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n0c</guid>
+      <pubDate>Tue, 08 Sep 2026 08:30:00 GMT</pubDate>
+      <category>vchod</category>
+      <description>Z Myslíkovy nic. Pak pasáž Exafin. Schody dolů. Čajovna je pod městem — proto ji minou ti, kdo jen procházejí.</description>
+    </item>
+    <item>
+      <title>Nový oolong z Ali Shan</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n1</guid>
+      <pubDate>Wed, 09 Sep 2026 07:00:00 GMT</pubDate>
+      <category>čaj</category>
+      <description>První sklizeň, jemná sladkost. Zeptejte se obsluhy na konvici pro dva.</description>
+    </item>
+    <item>
+      <title>Tichá středa</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n2</guid>
+      <pubDate>Thu, 03 Sep 2026 15:00:00 GMT</pubDate>
+      <category>provoz</category>
+      <description>Bez akce, bez mikrofonu. Jen čaj, dýmka a volné stoly od 17:30.</description>
+    </item>
+    <item>
+      <title>Krátká degustace v neděli</title>
+      <link>https://www.buddhacajovna.cz/#nastenka</link>
+      <guid isPermaLink="false">n3</guid>
+      <pubDate>Mon, 07 Sep 2026 12:00:00 GMT</pubDate>
+      <category>akce</category>
+      <description>Tři zelené, 16:00. Bez vstupného — kdo přijde, sedí.</description>
+    </item>
   </channel>
 </rss>
