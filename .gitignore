@@ -8,6 +8,7 @@ dist
 *.local
 .env
 .env.*
+!.env.example
 backups
 artifacts
 .grok
