@@ -27,34 +27,36 @@ export function MatchaPromo() {
               {t("matcha.badge")}
             </p>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="carta p-6 text-paper-ink md:p-8">
             <Reveal>
-              <p className="kicker">{t("matcha.kicker")}</p>
-              <h2 className="headline mt-2 text-4xl md:text-5xl">{t("matcha.title")}</h2>
+              <p className="text-[0.68rem] tracking-[0.32em] text-paper-mute uppercase">{t("matcha.kicker")}</p>
+              <h2 className="mt-2 font-serif text-4xl font-semibold leading-[0.9] tracking-[-0.045em] text-paper-ink md:text-5xl">
+                {t("matcha.title")}
+              </h2>
               <span className="hairline" />
             </Reveal>
             <ul className="mt-5 space-y-3">
               {items.map((x) => (
-                <li key={x.n} className="flex items-baseline justify-between gap-3 border-b border-line/80 pb-2">
+                <li key={x.n} className="flex items-baseline justify-between gap-3 border-b border-paper-ink/15 pb-2">
                   <div>
-                    <p className="font-serif text-lg text-ivory">{x.n}</p>
-                    <p className="text-xs text-muted">{x.t}</p>
+                    <p className="font-serif text-lg text-paper-ink">{x.n}</p>
+                    <p className="mt-0.5 text-sm leading-relaxed text-paper-ink/80">{x.t}</p>
                   </div>
-                  <p className="shrink-0 font-serif text-gold">{x.p}</p>
+                  <p className="shrink-0 font-serif text-xl font-semibold text-[#4f7a38]">{x.p}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-[11px] text-muted">{t("matcha.note")}</p>
+            <p className="mt-4 text-xs text-paper-ink/70">{t("matcha.note")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/rezervace"
-                className="rounded-full bg-gold px-5 py-2.5 text-[11px] tracking-[0.14em] text-bg uppercase hover:bg-ivory"
+                className="rounded-full bg-gold px-5 py-2.5 text-[11px] tracking-[0.14em] text-bg uppercase hover:bg-paper-ink hover:text-paper"
               >
                 {t("matcha.book")}
               </Link>
               <a
                 href={IG}
-                className="rounded-full border border-gold/45 px-5 py-2.5 text-[11px] tracking-[0.14em] text-gold uppercase hover:border-gold"
+                className="rounded-full border border-paper-ink/35 px-5 py-2.5 text-[11px] tracking-[0.14em] text-paper-ink uppercase hover:border-paper-ink"
                 rel="noopener noreferrer"
               >
                 {t("matcha.ig")}

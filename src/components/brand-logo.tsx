@@ -17,23 +17,27 @@ export function BrandLogo({ compact }: Props) {
         }
       >
         <span className="logo-glow" aria-hidden />
-        <img src="/logo.svg?v=gold" alt="" className="relative z-[1] size-full" />
+        <img src="/logo.svg?v=gold" alt="" className="relative z-[1] size-full contrast-125" />
       </span>
       <span className="leading-[1.02]">
-        <span className="block font-serif text-[1.15rem] font-semibold tracking-[0.16em] text-ivory uppercase md:text-[1.55rem]">
+        <span className="block font-serif text-[1.45rem] font-semibold tracking-[0.06em] text-ivory uppercase md:text-[1.95rem]">
           Buddha
         </span>
-        <span className="block font-serif text-[0.82rem] font-semibold tracking-[0.2em] text-gold uppercase md:text-[1rem]">
+        <span className="block font-serif text-[0.78rem] font-semibold tracking-[0.08em] text-gold uppercase md:text-[0.92rem]">
           Čajovna · Praha
         </span>
         <span
           className={
             compact
-              ? "mt-0.5 block text-[8px] tracking-[0.18em] text-muted uppercase"
-              : "mt-0.5 block text-[8px] tracking-[0.2em] text-muted uppercase sm:text-[9px] sm:tracking-[0.22em]"
+              ? "mt-1 flex items-baseline gap-1.5 text-[9px] tracking-[0.08em] text-ivory/80 uppercase"
+              : "mt-1 flex items-baseline gap-1.5 text-[10px] tracking-[0.08em] text-ivory/85 uppercase sm:text-[11px]"
           }
         >
-          Tea House & Shisha Lounge
+          <span>Tea House</span>
+          <span className="font-serif text-[0.95em] font-semibold tracking-normal text-gold lowercase" aria-hidden>
+            &
+          </span>
+          <span>Shisha Lounge</span>
         </span>
       </span>
     </Link>

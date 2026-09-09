@@ -1,8 +1,8 @@
-export function TeaMountainMark({ compact }: { compact?: boolean }) {
+export function TeaMountainMark({ compact, className }: { compact?: boolean; className?: string }) {
   return (
     <a
       href="https://www.teamountain.cz/"
-      className="inline-flex items-center gap-2.5 text-gold hover:text-ivory"
+      className={`inline-flex items-center gap-2.5 ${className ?? "text-gold hover:text-ivory"}`}
       rel="noopener noreferrer"
       aria-label="Tea Mountain"
       title="Tea Mountain"

@@ -94,7 +94,7 @@ export function OfferMosaic() {
               <div className="absolute inset-0 z-[2] bg-gradient-to-r from-bg via-bg/55 to-transparent md:bg-gradient-to-t md:from-bg md:via-bg/40 md:to-transparent" />
               <div className="offer-warm pointer-events-none absolute inset-0 z-[2]" />
               <span className="offer-fx pointer-events-none absolute inset-0 z-[2]" aria-hidden />
-              <div className="absolute inset-0 z-[2] ring-1 ring-inset ring-gold/35" />
+              <div className="absolute inset-0 z-[2] ring-1 ring-inset ring-ivory/80" />
               <div className="absolute inset-0 z-[3] flex items-center justify-between gap-3 p-4 md:items-end md:p-5">
                 <div className="offer-copy flex items-center gap-3 md:flex-col md:items-start">
                   <span className="offer-mark grid size-12 shrink-0 place-items-center rounded-full border border-gold text-gold">

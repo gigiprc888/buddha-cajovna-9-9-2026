@@ -22,7 +22,7 @@ export function SocialLinks({ className = "" }: { className?: string }) {
     <div className={"flex items-center gap-2 " + className}>
       <a
         href={IG}
-        className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-3 py-1.5 text-[10px] tracking-[0.16em] text-gold uppercase hover:border-gold hover:bg-gold hover:text-bg"
+        className="inline-flex items-center gap-2 rounded-full border border-gold px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase hover:bg-gold hover:text-bg"
         rel="noopener noreferrer"
       >
         <IconIg />
@@ -30,7 +30,7 @@ export function SocialLinks({ className = "" }: { className?: string }) {
       </a>
       <a
         href={FB}
-        className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-3 py-1.5 text-[10px] tracking-[0.16em] text-gold uppercase hover:border-gold hover:bg-gold hover:text-bg"
+        className="inline-flex items-center gap-2 rounded-full border border-gold px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase hover:bg-gold hover:text-bg"
         rel="noopener noreferrer"
       >
         <IconFb />

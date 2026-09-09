@@ -9,8 +9,8 @@ export type ShiftSession = {
 const KEY = "buddha-shift";
 
 export const SHIFT_PINS: Record<ShiftRole, { pin: string; name: string; label: string }> = {
-  owner: { pin: process.env.SHIFT_PIN_OWNER ?? "", name: "Aleš", label: "Majitel" },
-  staff: { pin: process.env.SHIFT_PIN_STAFF ?? "", name: "Čajovník", label: "Čajovník" },
+  owner: { pin: "1742", name: "Aleš", label: "Majitel" },
+  staff: { pin: "2225", name: "Čajovník", label: "Čajovník" },
 };
 
 export function readShift(): ShiftSession | null {
@@ -35,5 +35,5 @@ export function endShift() {
 }
 
 export function checkPin(role: ShiftRole, pin: string) {
-  return Boolean(SHIFT_PINS[role].pin) && pin === SHIFT_PINS[role].pin;
+  return pin === SHIFT_PINS[role].pin;
 }

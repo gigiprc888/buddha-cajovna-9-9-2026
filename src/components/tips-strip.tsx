@@ -39,7 +39,7 @@ export function TipsStrip() {
 
   return (
     <div className="tips-strip fixed inset-x-0 bottom-[4.4rem] z-40 md:bottom-0">
-      <div className="relative overflow-hidden border-t border-[#f3e6cc]/40 bg-gold px-3 py-2.5 shadow-[0_-16px_48px_rgb(212_180_131_/_0.55)]">
+      <div className="relative overflow-hidden border-t border-[#f3e6cc]/35 bg-gold px-3 py-2.5 shadow-[0_-6px_16px_rgb(12_11_10_/_0.18)]">
         <span className="tips-shine pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto flex max-w-5xl items-center gap-3">
           <span className="hidden shrink-0 rounded-full bg-bg px-2.5 py-1 text-[10px] tracking-[0.22em] text-gold uppercase sm:inline">

@@ -8,7 +8,7 @@ export function MenuBook() {
           <a
             key={c.id}
             href={`#m-${c.id}`}
-            className="rounded-full border border-gold/25 px-3 py-1.5 text-[11px] tracking-[0.08em] text-ivory uppercase hover:border-gold hover:bg-gold hover:text-bg"
+            className="rounded-full border border-paper-ink/20 bg-paper px-3 py-1.5 text-[11px] tracking-[0.08em] text-paper-ink uppercase hover:border-gold hover:bg-gold hover:text-bg"
           >
             <span className="mr-1.5">{c.emoji}</span>
             {c.title}
@@ -21,7 +21,7 @@ export function MenuBook() {
           <section
             key={c.id}
             id={`m-${c.id}`}
-            className="scroll-mt-32 overflow-hidden rounded-card border bg-surface md:scroll-mt-36"
+            className="carta scroll-mt-32 overflow-hidden rounded-card border md:scroll-mt-36"
             style={{ borderColor: `${c.tone}66` }}
           >
             <header
@@ -30,19 +30,19 @@ export function MenuBook() {
             >
               <span className="text-3xl leading-none">{c.emoji}</span>
               <div>
-                <h2 className="font-serif text-2xl tracking-wide text-ivory uppercase">{c.title}</h2>
-                {c.hint ? <p className="mt-0.5 text-xs text-muted">{c.hint}</p> : null}
+                <h2 className="font-serif text-2xl tracking-wide text-paper-ink uppercase">{c.title}</h2>
+                {c.hint ? <p className="mt-1 text-sm leading-snug text-paper-ink/80">{c.hint}</p> : null}
               </div>
             </header>
             <ul>
               {c.items.map((x) => (
                 <li
                   key={x.n}
-                  className="flex items-center justify-between gap-4 border-b border-line/70 px-5 py-3.5 last:border-0"
+                  className="flex items-center justify-between gap-4 border-b border-paper-ink/10 px-5 py-3.5 last:border-0"
                 >
                   <div className="min-w-0">
-                    <p className="font-serif text-xl text-ivory">{x.n}</p>
-                    {x.t ? <p className="mt-0.5 text-xs leading-relaxed text-muted">{x.t}</p> : null}
+                    <p className="font-serif text-xl text-paper-ink">{x.n}</p>
+                    {x.t ? <p className="mt-1 max-w-xl text-sm leading-relaxed text-paper-ink/90">{x.t}</p> : null}
                   </div>
                   <p
                     className="shrink-0 rounded-full px-3 py-1 font-serif text-xl font-semibold tracking-wide"

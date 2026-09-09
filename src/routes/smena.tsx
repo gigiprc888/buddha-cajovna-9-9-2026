@@ -126,7 +126,9 @@ function ShiftGate({ onIn }: { onIn: (s: ShiftSession) => void }) {
             </div>
           </div>
         ) : null}
-        <p className="mt-10 text-xs text-muted">Kód směny má obsluha. V gitu není.</p>
+        <p className="mt-10 text-xs text-muted">
+          Zkušební kódy: majitel <span className="text-gold">1742</span> · čajovník <span className="text-gold">2225</span>
+        </p>
         <Link to="/" className="mt-6 inline-block text-sm text-gold">
           Zpět na web →
         </Link>

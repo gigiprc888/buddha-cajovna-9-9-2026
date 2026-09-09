@@ -1,8 +1,8 @@
-export function MedovinarnaMark({ compact }: { compact?: boolean }) {
+export function MedovinarnaMark({ compact, className }: { compact?: boolean; className?: string }) {
   return (
     <a
       href="https://www.medovinarna.cz/"
-      className="inline-flex items-center gap-2 text-gold hover:text-ivory"
+      className={`inline-flex items-center gap-2 ${className ?? "text-gold hover:text-ivory"}`}
       rel="noopener noreferrer"
       aria-label="Medovinárna"
       title="Medovinárna"

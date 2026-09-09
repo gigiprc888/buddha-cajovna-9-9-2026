@@ -6,7 +6,8 @@ export function HappyHours() {
   const { t } = useI18n();
   return (
     <section id="happy-hours" className="relative z-0 px-3 py-5 md:px-6">
-      <div className="overflow-hidden rounded-card border border-gold/25 bg-surface">
+      <div className="hh-neon rounded-card p-[4px]">
+        <div className="relative z-[1] overflow-hidden rounded-[0.8rem] bg-surface">
         <div className="grid md:grid-cols-[0.9fr_1.2fr]">
           <div className="relative min-h-[16rem] bg-bg">
             <img
@@ -42,6 +43,7 @@ export function HappyHours() {
               {t("hh.cta")}
             </Link>
           </div>
+        </div>
         </div>
       </div>
     </section>

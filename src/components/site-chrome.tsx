@@ -54,7 +54,7 @@ function MobileDock() {
   const { t } = useI18n();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-neon/50 bg-bg/92 px-1 pb-[max(0.4rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_28px_rgb(196_92_255_/_0.08)] backdrop-blur-md md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-aqua/40 bg-bg/92 px-1 pb-[max(0.4rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_28px_rgb(58_214_200_/_0.08)] backdrop-blur-md md:hidden"
       aria-label={t("dock.where")}
     >
       <a href="/#kontakt" className="flex flex-col items-center gap-1 py-1 text-center">
@@ -170,7 +170,7 @@ export function SiteHeader() {
 
 function IconCup() {
   return (
-    <svg viewBox="0 0 48 48" className="h-10 w-10 text-gold" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <svg viewBox="0 0 48 48" className="mx-auto h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.4">
       <path d="M12 20h20c0 8-4.5 14-10 14s-10-6-10-14Z" />
       <path d="M32 22h4.5a5 5 0 0 1 0 10H31" />
       <path d="M14 36h16" />
@@ -180,7 +180,7 @@ function IconCup() {
 }
 function IconHookah() {
   return (
-    <svg viewBox="0 0 48 48" className="h-10 w-10 text-gold" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <svg viewBox="0 0 48 48" className="mx-auto h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.4">
       <ellipse cx="24" cy="14" rx="6" ry="3" />
       <path d="M24 17v8" />
       <path d="M18 33c0-5 3-8 6-8s6 3 6 8v2H18v-2Z" />
@@ -192,7 +192,7 @@ function IconHookah() {
 }
 function IconDice() {
   return (
-    <svg viewBox="0 0 48 48" className="h-10 w-10 text-gold" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <svg viewBox="0 0 48 48" className="mx-auto h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.4">
       <rect x="10" y="16" width="18" height="18" rx="2" />
       <path d="M28 18l10-6 4 16-10 6" />
       <circle cx="16" cy="22" r="1.2" fill="currentColor" />
@@ -203,7 +203,7 @@ function IconDice() {
 }
 function IconGatcha() {
   return (
-    <svg viewBox="0 0 48 48" className="h-10 w-10 text-gold" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <svg viewBox="0 0 48 48" className="mx-auto h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.4">
       <rect x="16" y="28" width="16" height="10" rx="1" />
       <circle cx="24" cy="18" r="10" />
       <circle cx="20" cy="16" r="1.6" />
@@ -216,7 +216,7 @@ function IconGatcha() {
 }
 function IconDidge() {
   return (
-    <svg viewBox="0 0 48 48" className="h-10 w-10 text-gold" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <svg viewBox="0 0 48 48" className="mx-auto h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.4">
       <path d="M8 30c8-2 12-10 22-12 6-1 10 1 12 4" strokeLinecap="round" />
       <path d="M8 33c8-2 12-9 22-11" strokeLinecap="round" opacity=".5" />
       <circle cx="8" cy="31.5" r="2.4" />
@@ -258,27 +258,28 @@ export function SiteFooter() {
     },
   ];
   return (
-    <footer className="border-t border-gold/20 pb-24 md:pb-10">
-      <div className="grid grid-cols-2 gap-px bg-gold/15 sm:grid-cols-3 lg:grid-cols-5">
+    <footer className="relative isolate overflow-hidden border-t border-gold/20 pb-24 md:pb-10">
+      <span className="star-sky" aria-hidden />
+      <div className="relative z-[1] grid grid-cols-2 gap-px bg-paper-ink/15 sm:grid-cols-3 lg:grid-cols-5">
         {icons.map(({ href, Icon, t: title, d }) => (
-          <a key={title} href={href} className="bg-bg px-4 py-6 text-center hover:bg-surface">
+          <a key={title} href={href} className="bg-paper px-4 py-7 text-center text-paper-ink">
             <Icon />
-            <p className="mt-3 text-[11px] tracking-[0.18em] text-gold uppercase">{title}</p>
-            <p className="mt-2 text-xs leading-relaxed text-muted">{d}</p>
+            <p className="mt-3 text-[11px] tracking-[0.18em] text-paper-ink uppercase">{title}</p>
+            <p className="mt-2 text-xs leading-relaxed text-paper-mute">{d}</p>
           </a>
         ))}
       </div>
 
-      <div className="grid gap-px bg-gold/15 md:grid-cols-3">
+      <div className="relative z-[1] grid gap-px bg-gold/15 md:grid-cols-3">
         {stories.map((s) => {
           const inner = (
-            <div className="relative min-h-[12rem] overflow-hidden border border-gold/20 bg-bg">
-              <Pic src={s.src} alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" />
+            <div className="story-tile relative min-h-[12rem] overflow-hidden border border-gold/20 bg-bg">
+              <Pic src={s.src} alt="" className="story-tile-pic absolute inset-0 h-full w-full object-cover opacity-45" />
               <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/50 to-transparent" />
               <div className="relative flex h-full min-h-[12rem] flex-col justify-end p-5">
                 <p className="text-[11px] tracking-[0.2em] text-gold uppercase">{s.t}</p>
                 <p className="mt-2 max-w-xs text-sm text-ivory">{s.d}</p>
-                <span className="mt-3 text-[10px] tracking-[0.16em] text-gold uppercase">{s.cta} →</span>
+                <span className="story-tile-cta mt-3 text-[10px] tracking-[0.16em] text-gold uppercase">{s.cta} →</span>
               </div>
             </div>
           );
@@ -294,33 +295,37 @@ export function SiteFooter() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 gap-10 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4 md:px-10">
+      <div className="relative z-[1] grid grid-cols-1 gap-10 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4 md:px-10">
         <div className="min-w-0">
           <BrandLogo compact />
-          <p className="mt-3 max-w-[12rem] text-xs tracking-[0.2em] text-gold uppercase">{t("footer.motto")}</p>
+          <p className="mt-4 max-w-[14rem] font-serif text-xl leading-tight text-ivory">{t("footer.motto")}</p>
           <p className="mt-6 text-[11px] tracking-[0.18em] text-gold uppercase">{t("footer.hours")}</p>
-          <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-muted">{t("footer.hoursShort")}</p>
+          <p className="mt-2 whitespace-pre-line font-serif text-lg leading-snug text-ivory">{t("footer.hoursShort")}</p>
         </div>
         <div className="min-w-0">
           <p className="text-[11px] tracking-[0.18em] text-gold uppercase">{t("footer.contact")}</p>
-          <p className="mt-3 text-sm text-muted">Myslíkova 174/23</p>
-          <p className="text-sm text-muted">110 00 Praha 1</p>
-          <a className="mt-2 block text-sm text-gold" href="tel:+420222515616" onClick={onPhoneClick}>
+          <p className="mt-3 text-sm text-ivory">Myslíkova 174/23</p>
+          <p className="text-sm text-ivory/70">110 00 Praha 1</p>
+          <a
+            className="mt-3 block font-serif text-2xl leading-none text-gold hover:text-ivory"
+            href="tel:+420222515616"
+            onClick={onPhoneClick}
+          >
             +420 222 515 616
           </a>
-          <a className="block break-all text-sm text-gold" href="mailto:buddha.provozni@gmail.com">
+          <a className="mt-2 block break-all text-sm text-ivory/85 hover:text-gold" href="mailto:buddha.provozni@gmail.com">
             buddha.provozni@gmail.com
           </a>
-          <SocialLinks className="mt-4 flex-col items-start" />
+          <SocialLinks className="mt-5 flex-col items-start" />
         </div>
         <div className="min-w-0">
           <p className="text-[11px] tracking-[0.18em] text-gold uppercase">{t("footer.how")}</p>
+          <p className="mt-3 font-serif text-lg leading-snug text-ivory">{t("footer.door")}</p>
           <p className="mt-3 text-sm leading-relaxed text-muted">{t("footer.metro")}</p>
           <p className="text-sm leading-relaxed text-muted">{t("footer.tram")}</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted">{t("footer.door")}</p>
           <a
             href="https://maps.google.com/?q=Mysl%C3%ADkova+174/23,+Praha"
-            className="mt-3 inline-block text-[10px] tracking-[0.16em] text-gold uppercase"
+            className="mt-4 inline-flex rounded-full bg-gold px-4 py-2 text-[11px] tracking-[0.16em] text-bg uppercase hover:bg-ivory"
           >
             {t("footer.map")}
           </a>
@@ -339,18 +344,21 @@ export function SiteFooter() {
           </span>
         </a>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-gold/15 px-5 py-8">
-        <p className="text-[11px] tracking-[0.22em] text-gold uppercase">{t("footer.partners")}</p>
+      <div className="relative z-[1] flex flex-col items-center gap-3 bg-paper px-5 py-8 text-paper-ink">
+        <p className="text-[11px] tracking-[0.22em] text-paper-mute uppercase">{t("footer.partners")}</p>
         <div className="flex flex-wrap items-center justify-center gap-8">
-          <MedovinarnaMark />
-          <TeaMountainMark />
+          <MedovinarnaMark className="text-paper-ink hover:text-paper-mute" />
+          <TeaMountainMark className="text-paper-ink hover:text-paper-mute" />
         </div>
-        <a href="/smena" className="mt-4 text-[10px] tracking-[0.16em] text-muted/70 uppercase hover:text-gold">
+        <a href="/smena" className="mt-4 text-[10px] tracking-[0.16em] text-paper-mute uppercase hover:text-paper-ink">
           {t("footer.staff")}
         </a>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-gold/10 px-5 py-4 md:flex-row md:justify-between md:px-10">
-        <p className="hidden text-[11px] tracking-[0.12em] text-muted/60 uppercase md:block">© 2026 Buddha čajovna</p>
+      <div className="relative z-[1] flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-5 py-3">
+        <p className="text-[11px] tracking-[0.12em] text-muted/55 uppercase">© 2026 Buddha čajovna</p>
+        <span className="text-muted/30" aria-hidden>
+          ·
+        </span>
         <a
           href="https://www.optimateo.com/onyx-web?utm_source=buddha-cajovna&utm_medium=client_footer&utm_campaign=onyx_web"
           target="_blank"
@@ -365,8 +373,8 @@ export function SiteFooter() {
             })
           }
         >
-          <span className="text-muted/70">ONYX WEB</span>
-          <span className="text-muted/50"> by OPTIMATEO</span>
+          <span className="text-muted/55">ONYX WEB</span>
+          <span className="text-muted/40"> by OPTIMATEO</span>
         </a>
       </div>
     </footer>
