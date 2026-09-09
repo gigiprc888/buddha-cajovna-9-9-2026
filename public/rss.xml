@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Buddha čajovna — nástěnka</title>
+    <link>https://www.buddhacajovna.cz/#nastenka</link>
+    <description>Čaj, akce a provozní lístky z nástěnky čajovny Buddha. Myslíkova 174/23, Praha 1.</description>
+    <language>cs</language>
+    <atom:link href="https://www.buddhacajovna.cz/rss.xml" rel="self" type="application/rss+xml"/>
+  </channel>
+</rss>
