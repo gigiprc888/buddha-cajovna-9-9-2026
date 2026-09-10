@@ -65,7 +65,7 @@ export const MENU_CATS: MenuCat[] = [
     emoji: "✨",
     items: [
       { n: "Touareg", p: "99", t: "Maroko. Zelený čaj, máta, cukr. Čaj pouště — hostovi se nalévá třikrát." },
-      { n: "Wayusa", p: "119", t: "Amazonie. Čistá energie, 15 min. List, kterým si Kichwa vyplachují sny." },
+      { n: "Wayusa", p: "119", t: "Přírodní energie z Amazonie. 15 min. List, kterým si Kichwa vyplachují sny." },
       { n: "Dátá Masala", p: "128", t: "Indie. Koření a mléko, až 30 min. Chai, který se vaří pomalu, jako řeč na trhu." },
       { n: "Zázvorový čaj", p: "115", t: "Čerstvý zázvor, citron, med. Léčivka, která se tváří jako flirt." },
       { n: "Karkade", p: "99", t: "Nil. Ibišek. Karmínový čaj faraonů — trpký, žízeň ho miluje." },

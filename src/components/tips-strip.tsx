@@ -6,7 +6,7 @@ const TIPS = {
   cs: [
     { k: "Happy Hours", t: "Po–Čt 13–15: dvě dýmky za cenu jedné." },
     { k: "Matcha menu", t: "Float od 120 Kč. Sezóna brzy končí." },
-    { k: "Wayusa", t: "Čistá energie, vaří se 15 min. 119 Kč." },
+    { k: "Wayusa", t: "Přírodní energie z Amazonie. 15 min. 119 Kč." },
     { k: "Dýmka", t: "Adalya od 229 Kč. Pouze k nápoji, od 18 let." },
     { k: "Čajové mojito", t: "Zelený čaj, rum, máta. 159 Kč." },
     { k: "Medovina", t: "Podáváme i v rohu. Od Medovinárny." },
@@ -15,7 +15,7 @@ const TIPS = {
   en: [
     { k: "Happy Hours", t: "Mon–Thu 13–15: two hookahs for the price of one." },
     { k: "Matcha menu", t: "Float from 120 Kč. Season ending soon." },
-    { k: "Wayusa", t: "Clean energy, 15 min brew. 119 Kč." },
+    { k: "Wayusa", t: "Natural energy from the Amazon. 15 min. 119 Kč." },
     { k: "Hookah", t: "Adalya from 229 Kč. With a drink, 18+." },
     { k: "Tea mojito", t: "Green tea, rum, mint. 159 Kč." },
     { k: "Mead", t: "In a horn, as the Celts drank it. From Medovinárna." },
