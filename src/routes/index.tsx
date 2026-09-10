@@ -197,7 +197,7 @@ function Home() {
       <section id="dymka" className="grid items-center gap-8 px-5 py-10 md:grid-cols-[minmax(16rem,24rem)_1fr] md:px-12">
         <div className="neon-frame relative mx-auto aspect-[3/4] w-full max-w-[22rem] overflow-hidden rounded-card bg-bg">
           <LiveStill
-            src="/promo/02-dymka.mp4"
+            src="/promo/s02-dymka.mp4"
             poster="/place/hookah-portrait.jpg"
             alt="Vodní dýmka — žhnoucí kotel"
             className="absolute inset-0"
@@ -228,7 +228,7 @@ function Home() {
         </div>
         <div className="neon-frame relative h-80 md:min-h-[28rem]">
           <LiveStill
-            src="/promo/03-sal.mp4"
+            src="/promo/05-hry.mp4"
             poster="/place/library.jpg"
             alt="Sál s hrami a ratanovými židlemi"
             className="absolute inset-0"

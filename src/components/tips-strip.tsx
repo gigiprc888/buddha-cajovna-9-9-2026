@@ -4,6 +4,7 @@ import { useI18n } from "@/lib/i18n";
 
 const TIPS = {
   cs: [
+    { k: "Kombini", t: "Hledáme v centru Prahy vhodné prostory pro japonské kombini." },
     { k: "Happy Hours", t: "Po–Čt 13–15: dvě dýmky za cenu jedné." },
     { k: "Matcha menu", t: "Float od 120 Kč. Sezóna brzy končí." },
     { k: "Wayusa", t: "Přírodní energie z Amazonie. 15 min. 119 Kč." },
@@ -13,6 +14,7 @@ const TIPS = {
     { k: "Gatcha", t: "1 500 Kč na účtence = menší zatočení." },
   ],
   en: [
+    { k: "Kombini", t: "Looking for a space in central Prague for a Japanese kombini." },
     { k: "Happy Hours", t: "Mon–Thu 13–15: two hookahs for the price of one." },
     { k: "Matcha menu", t: "Float from 120 Kč. Season ending soon." },
     { k: "Wayusa", t: "Natural energy from the Amazon. 15 min. 119 Kč." },

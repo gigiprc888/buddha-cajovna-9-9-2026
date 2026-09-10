@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
+import { ControlShell, type ControlPage } from "@/components/control-shell";
+import { LANES, SEED } from "@/lib/board";
 import {
   WAVES,
   addWalkIn,
@@ -41,11 +43,28 @@ function guestsOf(rows: Reservation[]) {
   return rows.filter((r) => r.status !== "no_show" && r.status !== "done").reduce((n, r) => n + r.party_size, 0);
 }
 
+function greet() {
+  const h = new Date().getHours();
+  if (h < 12) return "Dobré ráno";
+  if (h < 18) return "Dobré odpoledne";
+  return "Dobrý večer";
+}
+
+function longDate() {
+  return new Date().toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "long" });
+}
+
+function vocative(name: string) {
+  if (name === "Aleš") return "Aleši";
+  if (name === "Čajovník") return "Čajovníku";
+  return name;
+}
+
 function Smena() {
   const [session, setSession] = useState<ShiftSession | null>(() => (typeof window === "undefined" ? null : readShift()));
   if (!session) return <ShiftGate onIn={(s) => setSession(s)} />;
   return (
-    <ShiftDesk
+    <ControlApp
       session={session}
       onOut={() => {
         endShift();
@@ -77,7 +96,7 @@ function ShiftGate({ onIn }: { onIn: (s: ShiftSession) => void }) {
     <div className="flex min-h-screen flex-col bg-bg px-5 py-10 font-sans text-fg">
       <div className="mx-auto w-full max-w-md">
         <BrandLogo />
-        <p className="kicker mt-10">Směna</p>
+        <p className="kicker mt-10">Buddha Control</p>
         <h1 className="headline mt-3 text-5xl">Kdo dnes vaří čaj?</h1>
         <span className="hairline" />
         <p className="mt-4 text-sm text-muted">Jen pro majitele a obsluhu. Hosté sem nechodí.</p>
@@ -126,10 +145,7 @@ function ShiftGate({ onIn }: { onIn: (s: ShiftSession) => void }) {
             </div>
           </div>
         ) : null}
-        <p className="mt-10 text-xs text-muted">
-          Zkušební kódy: majitel <span className="text-gold">1742</span> · čajovník <span className="text-gold">2225</span>
-        </p>
-        <Link to="/" className="mt-6 inline-block text-sm text-gold">
+        <Link to="/" className="mt-10 inline-block text-sm text-gold">
           Zpět na web →
         </Link>
       </div>
@@ -137,7 +153,143 @@ function ShiftGate({ onIn }: { onIn: (s: ShiftSession) => void }) {
   );
 }
 
-function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => void }) {
+function ControlApp({ session, onOut }: { session: ShiftSession; onOut: () => void }) {
+  const [page, setPage] = useState<ControlPage>(session.role === "owner" ? "overview" : "reservations");
+  const [tick, setTick] = useState(0);
+  const refresh = () => setTick((n) => n + 1);
+
+  return (
+    <ControlShell page={page} onPage={setPage} who={session.name} role={SHIFT_PINS[session.role].label} onOut={onOut}>
+      {page === "overview" ? <Overview key={tick} name={session.name} onGo={() => setPage("reservations")} /> : null}
+      {page === "reservations" ? <ReservationsPane session={session} onMutate={refresh} /> : null}
+      {page === "analytics" ? <Analytics /> : null}
+      {page === "board" ? <BoardAdmin /> : null}
+      {page === "menu" ? <MenuAdmin /> : null}
+      {page === "shop" ? <ShopSoon owner={session.role === "owner"} /> : null}
+      {page === "social" ? <SocialSoon /> : null}
+      {page === "ops" ? <Ops owner={session.role === "owner"} /> : null}
+      {page === "settings" ? <Settings session={session} /> : null}
+    </ControlShell>
+  );
+}
+
+function Overview({ name, onGo }: { name: string; onGo: () => void }) {
+  const date = todayIso();
+  const all = listReservations(date);
+  const live = all.filter((r) => r.status !== "done" && r.status !== "no_show");
+  const seated = all.filter((r) => r.status === "seated");
+  const waiting = all.filter((r) => r.status === "new");
+  const confirmed = all.filter((r) => r.status === "confirmed");
+  const next = [...all]
+    .filter((r) => r.status === "new" || r.status === "confirmed")
+    .sort((a, b) => a.wave.localeCompare(b.wave))
+    .slice(0, 3);
+  const activity = [...all].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 6);
+  const nowWave = WAVES.find((w) => w.id === "19:30")?.id ?? WAVES[0].id;
+  const takenNow = new Set(
+    all.filter((r) => r.wave === nowWave && r.status !== "done" && r.status !== "no_show").map((r) => r.table_id),
+  );
+
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Přehled</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory md:text-5xl">
+        {greet()}, {vocative(name)}.
+      </h1>
+      <p className="mt-2 text-sm capitalize text-muted">{longDate()}</p>
+      <p className="mt-2 text-[10px] tracking-[0.16em] text-muted uppercase">Lokální provozní data</p>
+
+      <div className="mt-6 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Kpi n={guestsOf(live)} l="Hosté v plánu" />
+        <Kpi n={seated.reduce((a, r) => a + r.party_size, 0)} l="Dnes u stolu" />
+        <Kpi n={waiting.length} l="Čeká na potvrzení" />
+        <Kpi n={TABLES.length - takenNow.size} l="Volné stoly · 19:30" />
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <section className="rounded-card border border-gold/20 bg-surface p-5">
+          <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Rezervace dnes</p>
+          <p className="mt-2 font-serif text-3xl text-ivory">{all.length}</p>
+          <p className="mt-1 text-sm text-muted">
+            {all.reduce((n, r) => n + r.party_size, 0)} hostů · {confirmed.length} potvrzeno · {waiting.length} nových · {seated.length} u stolu
+          </p>
+          <button type="button" onClick={onGo} className="mt-4 text-[11px] tracking-[0.16em] text-gold uppercase">
+            Otevřít rezervace →
+          </button>
+        </section>
+
+        <section className="rounded-card border border-gold/20 bg-surface p-5">
+          <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Další příchody</p>
+          {next.length === 0 ? (
+            <p className="mt-4 text-sm text-muted">Nikdo další nečeká. Walk-in z rezervací.</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {next.map((r) => (
+                <li key={r.id} className="flex justify-between gap-3 text-sm">
+                  <span className="text-ivory">
+                    {r.wave} · {r.name}
+                  </span>
+                  <span className="text-muted">
+                    {r.party_size} · {r.table_id}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+
+      <section className="mt-4 rounded-card border border-gold/20 bg-surface p-5">
+        <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Vytížení vln</p>
+        <div className="mt-4 space-y-3">
+          {WAVES.map((w) => {
+            const rows = all.filter((r) => r.wave === w.id && r.status !== "done" && r.status !== "no_show");
+            const g = guestsOf(rows);
+            const max = 40;
+            const pct = Math.min(100, Math.round((g / max) * 100));
+            return (
+              <div key={w.id}>
+                <div className="flex justify-between text-xs">
+                  <span className="text-ivory">
+                    {w.id} · {w.label}
+                  </span>
+                  <span className="text-muted">
+                    {rows.length} stolů · {g} hostů
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gold/10">
+                  <div className="h-full rounded-full bg-gold/70" style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[10px] text-muted">Pruh ukazuje počet hostů, ne procento obsazenosti sálu.</p>
+      </section>
+
+      <section className="mt-4 rounded-card border border-gold/20 bg-surface p-5">
+        <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Aktivita</p>
+        {activity.length === 0 ? (
+          <p className="mt-4 text-sm text-muted">Zatím žádná aktivita dnes.</p>
+        ) : (
+          <ul className="mt-3 space-y-2 text-sm">
+            {activity.map((r) => (
+              <li key={r.id} className="flex gap-3 text-muted">
+                <span className="tabular-nums text-gold/80">{r.created_at.slice(11, 16)}</span>
+                <span className="text-ivory">
+                  {r.email === "walkin@buddha.local" ? "Walk-in" : "Nová rezervace"} · {r.name} · {r.party_size}{" "}
+                  {r.party_size === 1 ? "host" : "hosté"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function ReservationsPane({ session, onMutate }: { session: ShiftSession; onMutate: () => void }) {
   const dates = upcomingDates(5);
   const [date, setDate] = useState(todayIso);
   const [wave, setWave] = useState<WaveId>("19:30");
@@ -145,17 +297,10 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
   const [sel, setSel] = useState<string | null>(null);
   const [walk, setWalk] = useState(false);
   const [tick, setTick] = useState(0);
-  const [shopLive, setShop] = useState(false);
 
   useEffect(() => {
     setTick((n) => n + 1);
   }, [date]);
-
-  useEffect(() => {
-    const sync = () => setShop(isShopLive());
-    sync();
-    return subscribeFlags(sync);
-  }, []);
 
   const all = listReservations(date);
   void tick;
@@ -177,69 +322,44 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
     setReservationStatus(id, status);
     setSel(id);
     setTick((n) => n + 1);
+    onMutate();
   }
 
   return (
-    <div className="min-h-screen bg-bg font-sans text-fg">
-      <header className="border-b border-gold/20 px-4 py-3 md:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-[10px] tracking-[0.2em] text-gold uppercase">{SHIFT_PINS[session.role].label} · směna</p>
-            <p className="font-serif text-2xl md:text-3xl">
-              {session.name}
-              <span className="text-muted"> · {formatDateCs(date)}</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {session.role === "owner" ? (
-              <select
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="rounded-full border border-gold/30 bg-bg px-3 py-1.5 text-xs text-ivory"
-              >
-                {dates.map((d) => (
-                  <option key={d} value={d}>
-                    {formatDateCs(d)}
-                  </option>
-                ))}
-              </select>
-            ) : null}
-            <button type="button" onClick={() => setWalk((v) => !v)} className="rounded-full bg-gold px-4 py-1.5 text-[10px] tracking-[0.14em] text-bg uppercase">
-              Walk-in
-            </button>
-            <button type="button" onClick={onOut} className="px-2 text-[11px] tracking-[0.16em] text-muted uppercase hover:text-gold">
-              Odhlásit
-            </button>
-          </div>
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Rezervace</p>
+          <h1 className="mt-1 font-serif text-4xl text-ivory">{formatDateCs(date)}</h1>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
-          <Kpi n={guestsOf(live)} l="Hosté v plánu" />
-          <Kpi n={seatedNow.reduce((a, r) => a + r.party_size, 0)} l="Teď u stolu" />
-          <Kpi n={waiting.length} l="Čeká potvrzení / příchod" />
-          <Kpi n={freeCount} l={`Volné stoly · ${wave}`} />
-        </div>
-        {session.role === "owner" ? (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-card border border-gold/25 bg-surface px-4 py-3">
-            <div>
-              <p className="text-[10px] tracking-[0.18em] text-gold uppercase">E-shop na webu</p>
-              <p className="mt-1 text-sm text-ivory">
-                {shopLive ? "Hosté vidí obchod a košík." : "Na produkci je nápis Připravujeme e-shop."}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShopLive(!shopLive)}
-              className={`rounded-full px-5 py-2 text-[11px] tracking-[0.16em] uppercase ${
-                shopLive ? "bg-gold text-bg" : "border border-gold/40 text-gold"
-              }`}
+        <div className="flex items-center gap-2">
+          {session.role === "owner" ? (
+            <select
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="rounded-full border border-gold/30 bg-bg px-3 py-1.5 text-xs text-ivory"
             >
-              {shopLive ? "Zapnuto" : "Vypnuto"}
-            </button>
-          </div>
-        ) : null}
-      </header>
+              {dates.map((d) => (
+                <option key={d} value={d}>
+                  {formatDateCs(d)}
+                </option>
+              ))}
+            </select>
+          ) : null}
+          <button type="button" onClick={() => setWalk((v) => !v)} className="rounded-full bg-gold px-4 py-1.5 text-[10px] tracking-[0.14em] text-bg uppercase">
+            Walk-in
+          </button>
+        </div>
+      </div>
 
-      <nav className="flex gap-2 overflow-x-auto border-b border-gold/10 px-4 py-3 md:px-6">
+      <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Kpi n={guestsOf(live)} l="Hosté v plánu" />
+        <Kpi n={seatedNow.reduce((a, r) => a + r.party_size, 0)} l="Teď u stolu" />
+        <Kpi n={waiting.length} l="Čeká potvrzení / příchod" />
+        <Kpi n={freeCount} l={`Volné stoly · ${wave}`} />
+      </div>
+
+      <nav className="mt-5 flex gap-2 overflow-x-auto pb-1">
         {WAVES.map((w) => {
           const n = guestsOf(all.filter((r) => r.wave === w.id));
           const c = all.filter((r) => r.wave === w.id && r.status !== "done" && r.status !== "no_show").length;
@@ -260,9 +380,21 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
         })}
       </nav>
 
-      {walk ? <WalkIn date={date} wave={wave} taken={taken} onDone={() => { setWalk(false); setTick((n) => n + 1); }} onClose={() => setWalk(false)} /> : null}
+      {walk ? (
+        <WalkIn
+          date={date}
+          wave={wave}
+          taken={taken}
+          onDone={() => {
+            setWalk(false);
+            setTick((n) => n + 1);
+            onMutate();
+          }}
+          onClose={() => setWalk(false)}
+        />
+      ) : null}
 
-      <div className="grid gap-6 px-4 py-6 lg:grid-cols-[1.15fr_0.85fr] md:px-6">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <section>
           <div className="mb-3 flex items-center gap-3">
             <p className="text-[11px] tracking-[0.18em] text-gold uppercase">Rezervace vlny</p>
@@ -280,10 +412,7 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
               shown.map((r) => {
                 const active = selected?.id === r.id;
                 return (
-                  <article
-                    key={r.id}
-                    className={`rounded-card border bg-surface p-4 ${active ? "border-gold" : "border-gold/20"}`}
-                  >
+                  <article key={r.id} className={`rounded-card border bg-surface p-4 ${active ? "border-gold" : "border-gold/20"}`}>
                     <button type="button" className="w-full text-left" onClick={() => setSel(r.id)}>
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -355,9 +484,7 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
                             key={t.id}
                             type="button"
                             onClick={() => guest && setSel(guest.id)}
-                            className={`min-w-[3.4rem] rounded-md border px-2 py-2 text-center ${
-                              guest ? TONE[guest.status] : "border-gold/15 text-muted"
-                            }`}
+                            className={`min-w-[3.4rem] rounded-md border px-2 py-2 text-center ${guest ? TONE[guest.status] : "border-gold/15 text-muted"}`}
                             title={guest ? `${guest.name} · ${guest.party_size}` : `volno · max ${t.max}`}
                           >
                             <p className="font-serif text-sm">{t.id}</p>
@@ -371,13 +498,304 @@ function ShiftDesk({ session, onOut }: { session: ShiftSession; onOut: () => voi
               })}
             </div>
           </div>
-          <p className="text-xs leading-relaxed text-muted">
-            {session.role === "owner"
-              ? "Majitel vidí dny dopředu, stoly i walk-in. Platby a účty sem zatím nepatří."
-              : "Potvrď, usaď, odškrtni. Walk-in usedne hned."}
-          </p>
         </aside>
       </div>
+    </div>
+  );
+}
+
+function Analytics() {
+  const [range, setRange] = useState<"1" | "7" | "30">("7");
+  const all = listReservations();
+  const from = new Date();
+  from.setHours(0, 0, 0, 0);
+  from.setDate(from.getDate() - (range === "1" ? 0 : range === "7" ? 6 : 29));
+  const fromIso = from.toISOString().slice(0, 10);
+  const rows = all.filter((r) => r.date >= fromIso);
+  const guests = rows.reduce((n, r) => n + r.party_size, 0);
+  const avg = rows.length ? guests / rows.length : 0;
+  const byStatus = (s: Reservation["status"]) => rows.filter((r) => r.status === s).length;
+  const walkins = rows.filter((r) => r.email === "walkin@buddha.local").length;
+  const days = new Set(rows.map((r) => r.date));
+
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Analytika</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Provoz</h1>
+      <p className="mt-2 text-[10px] tracking-[0.16em] text-muted uppercase">Lokální provozní data · ne cloud</p>
+      <div className="mt-4 flex gap-2">
+        {(
+          [
+            ["1", "Dnes"],
+            ["7", "7 dní"],
+            ["30", "30 dní"],
+          ] as const
+        ).map(([id, l]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setRange(id)}
+            className={`rounded-full px-4 py-1.5 text-[10px] tracking-[0.14em] uppercase ${range === id ? "bg-gold text-bg" : "border border-gold/30 text-gold"}`}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Kpi n={rows.length} l="Rezervace" />
+        <Kpi n={guests} l="Hosté" />
+        <Kpi n={Number(avg.toFixed(1))} l="Průměrná skupina" />
+        <Kpi n={walkins} l="Walk-in" />
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Kpi n={byStatus("confirmed")} l="Potvrzeno" />
+        <Kpi n={byStatus("seated")} l="U stolu" />
+        <Kpi n={byStatus("no_show")} l="Nedorazili" />
+        <Kpi n={byStatus("new")} l="Nové" />
+      </div>
+      <section className="mt-6 rounded-card border border-gold/20 bg-surface p-5">
+        <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Podle vlny</p>
+        <ul className="mt-3 space-y-2 text-sm">
+          {WAVES.map((w) => {
+            const n = rows.filter((r) => r.wave === w.id).length;
+            const g = rows.filter((r) => r.wave === w.id).reduce((a, r) => a + r.party_size, 0);
+            return (
+              <li key={w.id} className="flex justify-between text-muted">
+                <span className="text-ivory">
+                  {w.id} · {w.label}
+                </span>
+                <span>
+                  {n} rez. · {g} hostů
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+      {days.size > 1 ? (
+        <section className="mt-4 rounded-card border border-gold/20 bg-surface p-5">
+          <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Podle dne</p>
+          <ul className="mt-3 space-y-1 text-sm text-muted">
+            {[...days].sort().map((d) => {
+              const n = rows.filter((r) => r.date === d).length;
+              return (
+                <li key={d} className="flex justify-between">
+                  <span className="text-ivory">{formatDateCs(d)}</span>
+                  <span>{n}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        <SoonCard title="Web návštěvnost" state="Připojení GA4 připravujeme." />
+        <SoonCard title="Google profil" state="Planned" />
+        <SoonCard title="TeaHUB acquisition" state="Planned" />
+      </div>
+    </div>
+  );
+}
+
+function BoardAdmin() {
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Nástěnka</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Veřejné zápisníky</h1>
+      <p className="mt-2 text-sm text-muted">RSS běží na /rss.xml. Úpravy zápisů zatím na webu.</p>
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        {LANES.map((l) => (
+          <div key={l.id} className="rounded-card border border-gold/20 bg-surface p-4">
+            <p className="text-[10px] tracking-[0.16em] text-gold uppercase">{l.label}</p>
+            <p className="mt-2 font-serif text-2xl text-ivory">{SEED.filter((p) => p.lane === l.id).length}</p>
+            <p className="mt-1 text-xs text-muted">{l.kicker}</p>
+          </div>
+        ))}
+      </div>
+      <ul className="mt-6 space-y-2">
+        {SEED.slice(0, 8).map((p) => (
+          <li key={p.id} className="rounded-card border border-gold/15 bg-surface px-4 py-3">
+            <p className="text-[10px] tracking-[0.14em] text-gold uppercase">{p.lane}</p>
+            <p className="mt-1 text-sm text-ivory">{p.title}</p>
+          </li>
+        ))}
+      </ul>
+      <Link to="/" hash="nastenka" className="mt-6 inline-block text-sm text-gold">
+        Náhled na webu →
+      </Link>
+    </div>
+  );
+}
+
+function MenuAdmin() {
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Menu</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Lístek</h1>
+      <p className="mt-3 max-w-lg text-sm text-muted">Veřejný nápojový lístek a deskovky. Správa položek přijde později — teď odkaz na to, co vidí host.</p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link to="/menu" className="rounded-full bg-gold px-5 py-2 text-[11px] tracking-[0.14em] text-bg uppercase">
+          Otevřít lístek
+        </Link>
+        <Link to="/hry" className="rounded-full border border-gold/40 px-5 py-2 text-[11px] tracking-[0.14em] text-gold uppercase">
+          Hry
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function ShopSoon({ owner }: { owner: boolean }) {
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    const sync = () => setLive(isShopLive());
+    sync();
+    return subscribeFlags(sync);
+  }, []);
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">E-shop</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Připravujeme správu prodeje.</h1>
+      <p className="mt-3 max-w-lg text-sm text-muted">Produkty, objednávky, platby a sklad sem patří později. Teď jen viditelnost obchodu na webu.</p>
+      {owner ? (
+        <div className="mt-6 flex items-center justify-between rounded-card border border-gold/25 bg-surface px-4 py-3">
+          <div>
+            <p className="text-[10px] tracking-[0.18em] text-gold uppercase">Viditelnost na webu</p>
+            <p className="mt-1 text-sm text-ivory">{live ? "Hosté vidí obchod." : "Na webu je nápis Připravujeme."}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShopLive(!live)}
+            className={`rounded-full px-5 py-2 text-[11px] tracking-[0.16em] uppercase ${live ? "bg-gold text-bg" : "border border-gold/40 text-gold"}`}
+          >
+            {live ? "Zapnuto" : "Vypnuto"}
+          </button>
+        </div>
+      ) : null}
+      <div className="mt-6 grid gap-3 md:grid-cols-4">
+        {["Produkty", "Objednávky", "Platby", "Sklad"].map((x) => (
+          <SoonCard key={x} title={x} state="Připravujeme" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SocialSoon() {
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Sociální sítě</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Kanály</h1>
+      <p className="mt-3 text-sm text-muted">Bez OAuth, bez čísel sledujících. Připojení přijde v péči.</p>
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        {["Instagram", "Facebook", "Google Business Profile"].map((x) => (
+          <SoonCard key={x} title={x} state="Nepřipojeno · připravujeme" />
+        ))}
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        {["Příspěvky", "Kalendář", "Akce", "Výkon"].map((x) => (
+          <SoonCard key={x} title={x} state="Připravujeme" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Ops({ owner }: { owner: boolean }) {
+  const date = todayIso();
+  const all = listReservations(date);
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    const sync = () => setLive(isShopLive());
+    sync();
+    return subscribeFlags(sync);
+  }, []);
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Provoz</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">{formatDateCs(date)}</h1>
+      <div className="mt-6 grid gap-3 md:grid-cols-2">
+        <div className="rounded-card border border-gold/20 bg-surface p-5">
+          <p className="text-[10px] tracking-[0.16em] text-gold uppercase">Web</p>
+          <p className="mt-2 font-serif text-2xl text-ivory">Online</p>
+          <p className="mt-1 text-sm text-muted">Veřejná stránka běží.</p>
+        </div>
+        <div className="rounded-card border border-gold/20 bg-surface p-5">
+          <p className="text-[10px] tracking-[0.16em] text-gold uppercase">Rezervace dnes</p>
+          <p className="mt-2 font-serif text-2xl text-ivory">{all.length}</p>
+          <p className="mt-1 text-sm text-muted">{all.reduce((n, r) => n + r.party_size, 0)} hostů v záznamech</p>
+        </div>
+      </div>
+      <section className="mt-4 rounded-card border border-gold/20 bg-surface p-5">
+        <p className="text-[10px] tracking-[0.16em] text-gold uppercase">Vlny</p>
+        <ul className="mt-3 space-y-1 text-sm text-ivory">
+          {WAVES.map((w) => (
+            <li key={w.id}>
+              {w.id} · {w.label}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="mt-4 rounded-card border border-gold/20 bg-surface p-5">
+        <p className="text-[10px] tracking-[0.16em] text-gold uppercase">Místnosti</p>
+        <ul className="mt-3 space-y-1 text-sm text-muted">
+          {ROOMS.map((r) => (
+            <li key={r.id} className="text-ivory">
+              {r.name}
+              <span className="text-muted"> · {r.note}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      {owner ? (
+        <div className="mt-4 flex items-center justify-between rounded-card border border-gold/25 bg-surface px-4 py-3">
+          <div>
+            <p className="text-[10px] tracking-[0.18em] text-gold uppercase">E-shop na webu</p>
+            <p className="mt-1 text-sm text-ivory">{live ? "Viditelný" : "Připravujeme"}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShopLive(!live)}
+            className={`rounded-full px-5 py-2 text-[11px] tracking-[0.16em] uppercase ${live ? "bg-gold text-bg" : "border border-gold/40 text-gold"}`}
+          >
+            {live ? "Zapnuto" : "Vypnuto"}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Settings({ session }: { session: ShiftSession }) {
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.22em] text-gold uppercase">Nastavení</p>
+      <h1 className="mt-2 font-serif text-4xl text-ivory">Základ</h1>
+      <dl className="mt-6 max-w-lg space-y-3 text-sm">
+        <div className="flex justify-between border-b border-gold/10 py-2">
+          <dt className="text-muted">Role</dt>
+          <dd className="text-ivory">{SHIFT_PINS[session.role].label}</dd>
+        </div>
+        <div className="flex justify-between border-b border-gold/10 py-2">
+          <dt className="text-muted">Jméno</dt>
+          <dd className="text-ivory">{session.name}</dd>
+        </div>
+        <div className="flex justify-between border-b border-gold/10 py-2">
+          <dt className="text-muted">Data</dt>
+          <dd className="text-ivory">Lokální, tento prohlížeč</dd>
+        </div>
+      </dl>
+      <p className="mt-6 max-w-lg text-sm text-muted">Účty, cloud a ONYX sem patří později. Teď stačí směna a PIN.</p>
+    </div>
+  );
+}
+
+function SoonCard({ title, state }: { title: string; state: string }) {
+  return (
+    <div className="rounded-card border border-gold/15 bg-surface p-4 opacity-80">
+      <p className="font-serif text-xl text-ivory">{title}</p>
+      <p className="mt-2 text-[10px] tracking-[0.14em] text-gold uppercase">{state}</p>
     </div>
   );
 }
@@ -422,7 +840,7 @@ function WalkIn({
   }
 
   return (
-    <form onSubmit={submit} className="mx-4 mt-4 rounded-card border border-gold bg-surface p-4 md:mx-6">
+    <form onSubmit={submit} className="mt-4 rounded-card border border-gold bg-surface p-4">
       <div className="flex items-center justify-between">
         <p className="text-[11px] tracking-[0.18em] text-gold uppercase">Walk-in · {wave}</p>
         <button type="button" onClick={onClose} className="text-muted hover:text-gold">
@@ -445,11 +863,7 @@ function WalkIn({
           onChange={(e) => setParty(Number(e.target.value))}
           className="rounded-md border border-gold/25 bg-bg px-3 py-2 text-sm text-ivory outline-none"
         />
-        <select
-          value={table}
-          onChange={(e) => setTable(e.target.value)}
-          className="rounded-md border border-gold/25 bg-bg px-3 py-2 text-sm text-ivory"
-        >
+        <select value={table} onChange={(e) => setTable(e.target.value)} className="rounded-md border border-gold/25 bg-bg px-3 py-2 text-sm text-ivory">
           {free
             .filter((t) => t.max >= party)
             .map((t) => (

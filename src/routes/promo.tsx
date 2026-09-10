@@ -4,13 +4,12 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 export const Route = createFileRoute("/promo")({ component: Promo });
 
 const CLIPS = [
-  { src: "/promo/01-caj.mp4", t: "Čaj", k: "Konvice · pára nahoru" },
-  { src: "/promo/02-dymka.mp4", t: "Dýmka", k: "Od 229 Kč k nápoji" },
-  { src: "/promo/03-sal.mp4", t: "Sál", k: "Hry · lampy · večer" },
-  { src: "/promo/04-drink.mp4", t: "Drink", k: "To, co sál živí" },
-  { src: "/promo/05-pasaz.mp4", t: "Pasáž", k: "Vchod · Exafin" },
-  { src: "/promo/06-gatcha.mp4", t: "Kout", k: "Zůstat o konvici dýl" },
-  { src: "/promo/07-sal-wide.mp4", t: "Sál wide", k: "16:9 pro web a FB" },
+  { src: "/promo/s01-caj.mp4", t: "Čaj", k: "Konvice · pára nahoru" },
+  { src: "/promo/s02-dymka.mp4", t: "Dýmka", k: "Od 229 Kč k nápoji" },
+  { src: "/promo/05-hry.mp4", t: "Sál", k: "Hry · lampy · večer" },
+  { src: "/promo/s04-drink.mp4", t: "Drink", k: "To, co sál živí" },
+  { src: "/promo/s03-pasaz.mp4", t: "Pasáž", k: "Vchod · Exafin" },
+  { src: "/promo/07-gatcha.mp4", t: "Gatcha", k: "Zatočení po účtence" },
   { src: "/promo/08-wookah.mp4", t: "Wookah", k: "Dvě dýmky · Bacilli" },
 ];
 
